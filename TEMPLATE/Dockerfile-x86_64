@@ -1,0 +1,10 @@
+FROM debian:jessie
+
+RUN apt-get -y update && apt-get install --no-install-recommends --no-install-suggests -y \
+    python-pip python-dev build-essential  \
+    && apt-get -y clean\
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN pip install Flask python-firebase influxdb Geohash pushbullet.py facebook-sdk uwsgi
+
+CMD chmod +x /webapp/docker-entrypoint.sh && /bin/sh -c /webapp/docker-entrypoint.sh

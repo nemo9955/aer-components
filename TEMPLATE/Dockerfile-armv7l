@@ -1,0 +1,11 @@
+FROM resin/rpi-raspbian:jessie
+RUN apt-get -y update && apt-get install --no-install-recommends --no-install-suggests -y \
+    XXXXXXXXXXXXXXXXXXXXXXX  \
+    && apt-get -y clean\
+	&& rm -rf /var/lib/apt/lists/*
+
+# RUN pip install XXXXXXXXXXXXXXX
+
+
+CMD chmod +x /webapp/docker-entrypoint.sh && /bin/sh -c /webapp/docker-entrypoint.sh
+CMD cron && tail -f /var/log/cron.log
