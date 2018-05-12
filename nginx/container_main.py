@@ -37,8 +37,10 @@ def run_container(alconf):
     # util.create_storage_container(CONT_NAME)
 
     run('export DOCKER_OPTS="--auth=identity --host=tcp://0.0.0.0:2376" && docker run ' +
-        ' --network host ' +
+        # ' --network host ' +
         ' --restart always ' +
+        '--link grafana ' +
+        # '--link chronograf ' +
         # ' -e DOCKER_HOST=tcp://0.0.0.0:2376 ' +
         ' -v /var/run/docker.sock:/var/run/docker.sock:ro ' +
         ' -dt ' +

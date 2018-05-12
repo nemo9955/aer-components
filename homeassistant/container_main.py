@@ -20,18 +20,19 @@ DOCKER_BASE_IMAGE = {
 
 
 def run_container(alconf):
-    util.ensute_custom_network_bridge()
+    # util.ensute_custom_network_bridge()
     util.ensure_cont_stopped(CONT_NAME)
 
     run("mkdir -p $HOME/%s" % CONT_NAME)
     run("rm $HOME/%s/configuration.yaml" % CONT_NAME)
 
-    util.to_host(os.path.join(CONT_PATH, "configuration.yaml"))
+    util.to_host(alconf.var.HASS_CONFIG_PATH)
     run("cp configuration.yaml $HOME/%s/" % CONT_NAME)
 
     run(" docker run " +
         " -dt " +
-        '--network host ' +
+        '--link influxdb ' +
+        # '--network host ' +
         # " --network {} ".format(alconf.var.docker_network_name) +
         # '--ip "192.168.59.123"  ' +
         ' --expose {} '.format(CONT_PORT) +

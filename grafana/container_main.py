@@ -16,7 +16,7 @@ CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
 CONT_PORT = "3000"
 DOCKER_BASE_IMAGE = {
-    "armv7l": "fg2it/grafana-armhf:v4.2.0",
+    "armv7l": "grafana/grafana",
     "x86_64": "grafana/grafana"
 }
 
@@ -30,7 +30,8 @@ def run_container(alconf):
 
     run(' docker run ' +
         ' -dt ' +
-        ' --network host ' +
+        # ' --network host ' +
+        '--link influxdb ' +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
         # ' -p 3000:3000 ' +
         ' --expose 3000 ' +
@@ -62,7 +63,7 @@ def run_container(alconf):
         arch_img_name)
 
     # TODO Function to wait until .... maybe an API call
-    time.sleep(5)
+    time.sleep(10)
 
     run("docker exec grafana grafana-cli plugins install grafana-clock-panel")
     run("docker exec grafana grafana-cli plugins install grafana-worldmap-panel")

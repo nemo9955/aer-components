@@ -19,11 +19,11 @@ DOCKER_BASE_IMAGE = {
 }
 
 
-def populate_conf(alconf):
-    ctype = CONT_NAME.upper().replace("-", "_")
-    alconf[ctype + "_CONT_NAME"] = CONT_NAME
-    alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
-    alconf.OPENHAB_PORT = "8080"
+# def populate_conf(alconf):
+#     ctype = CONT_NAME.upper().replace("-", "_")
+#     alconf[ctype + "_CONT_NAME"] = CONT_NAME
+#     alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
+#     alconf.OPENHAB_PORT = "8080"
     # alconf.OPENHAB_CONT_NAME = CONT_NAME
     # alconf.OPENHAB_IMG_NAME = DOCKER_BASE_IMAGE[util.dev_type()]
 

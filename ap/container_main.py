@@ -53,8 +53,8 @@ broadcast __AP_ADDRRESS_BROADCAST__
 def replace_here(alconf):
     replace_list = [
         ("__AP_INTERFACE__", "wlan0"),
-        ("__AP_SSID__", alconf.AP_SSID),
-        ("__AP_WPA_PASSPHRASE__", alconf.AP_PASS),
+        ("__AP_SSID__", alconf.var.AP_SSID),
+        ("__AP_WPA_PASSPHRASE__", alconf.var.AP_PASS),
         ("__AP_CANNEL__", "4"),
         ("__AP_ADDRRESS_ROUTE__", "192.168.42.1"),
         ("__AP_ADDRRESS_NETMASK__", "255.255.255.0"),

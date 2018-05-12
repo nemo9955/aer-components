@@ -35,7 +35,9 @@ def run_container(alconf):
     run(' docker run ' +
         ' --restart always ' +
         ' -dt ' +
-        ' --network host ' +
+        # ' --network host ' +
+        '--link influxdb ' +
+        '--link kapacitor ' +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
         # ' --expose $CONT_PORT ' +
         '-v {0}-storage:/var/lib/{0} '.format(CONT_NAME) +
@@ -46,8 +48,8 @@ def run_container(alconf):
         arch_img_name +
         ' --host 0.0.0.0 --port 8888 ' +
         ' --basepath /chronograf --prefix-routes ' +
-        ' --influxdb-url=http://localhost:8086 ' +
-        ' --kapacitor-url=http://localhost:9092 ')
+        ' --influxdb-url=http://influxdb:8086 ' +
+        ' --kapacitor-url=http://kapacitor:9092 ')
 
     # time.sleep(5)
     # run("docker exec ##### ")

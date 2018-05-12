@@ -39,7 +39,7 @@ def run_container(alconf):
         # ' --network host ' +
         # ' -e KAPACITOR_INFLUXDB_0_URLS_0=http://localhost:8086 ' +
         ' -v $HOME/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro  ' +
-        ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
+        ' -p {0}:{0} '.format(CONT_PORT) +
         # ' --expose $CONT_PORT ' +
         '-v {0}-storage:/var/lib/{0} '.format(CONT_NAME) +
         # ' -v $CURRENT_PATH/../{0}:/{0}:ro '.format(CONT_NAME) +

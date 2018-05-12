@@ -10,7 +10,7 @@ from aer.commands.component import util
 
 CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
-CONT_PORT = "7456"
+CONT_PORT = "9995"
 
 DOCKER_BASE_IMAGE = "respir-mesh-server"
 
@@ -27,14 +27,14 @@ def run_container(alconf):
     # print(json.dumps(alconf,indent=2))
 
     REM_SERVER_PATH = "$HOME/RespirMeshServer"
-    if run("hostname").strip() == alconf.DEV_HOSTNAME:
+    if run("hostname").strip() == alconf.var.DEV_HOSTNAME:
         print(yellow("Quick referencing the local dev files of the server"))
-        REM_SERVER_PATH = os.path.join(alconf.oh_root_dev, "RespirMesh")
+        REM_SERVER_PATH = os.path.join(alconf.root, "RespirMesh")
     else:
         print(yellow("Copying most of the server files to the host"))
         excluded = [".git", "lib", ".gitignore", "README.md", ".vscode"]
         run("rm -rf $HOME/RespirMeshServer ")
-        util.to_host(os.path.join(alconf.oh_root_dev, "RespirMesh"),
+        util.to_host(os.path.join(alconf.pth.root, "RespirMesh"),
                      rename="RespirMeshServer", exclude=excluded)
         run(" cp -r RespirMeshServer $HOME ")
 
