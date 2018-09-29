@@ -63,14 +63,14 @@ def run_container(alconf):
         arch_img_name)
 
     # TODO Function to wait until .... maybe an API call
-    time.sleep(10)
 
-    run("docker exec grafana grafana-cli plugins install grafana-clock-panel")
-    run("docker exec grafana grafana-cli plugins install grafana-worldmap-panel")
-    run("docker exec grafana grafana-cli plugins install natel-influx-admin-panel")
-    run("docker exec grafana grafana-cli plugins install grafana-piechart-panel")
-    run("docker exec grafana grafana-cli plugins update-all")
-    run("docker restart grafana")
+    # time.sleep(10)
+    # run("docker exec grafana grafana-cli plugins install grafana-clock-panel")
+    # run("docker exec grafana grafana-cli plugins install grafana-worldmap-panel")
+    # run("docker exec grafana grafana-cli plugins install natel-influx-admin-panel")
+    # run("docker exec grafana grafana-cli plugins install grafana-piechart-panel")
+    # run("docker exec grafana grafana-cli plugins update-all")
+    # run("docker restart grafana")
 
     util.print_cont_status(CONT_NAME)
 
