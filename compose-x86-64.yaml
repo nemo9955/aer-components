@@ -1,0 +1,211 @@
+version: '3.4'
+
+services:
+  influxdb:
+    # https://hub.docker.com/_/influxdb/
+    image: influxdb
+    # container_name: influxdb
+    ports:
+      - "8086:8086"
+      # - "8089:8089"
+    restart: always
+    environment:
+      # - INFLUXDB_DB=test
+      - INFLUXDB_USER=user
+      - INFLUXDB_USER_PASSWORD=user.par
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin.par
+      - INFLUXDB_REPORTING_DISABLED=true
+      - INFLUXDB_META_DIR=/var/lib/influxdb/meta
+      - INFLUXDB_DATA_DIR=/var/lib/influxdb/data
+      - INFLUXDB_DATA_WAL_DIR=/var/lib/influxdb/wal
+      # https://docs.influxdata.com/influxdb/v1.5/administration/config/
+      - INFLUXDB_COORDINATOR_WRITE_TIMEOUT=40s
+      - INFLUXDB_COORDINATOR_MAX_CONCURRENT_QUERIES=0
+      # - INFLUXDB_COORDINATOR_QUERY_TIMEOUT=30s
+      - INFLUXDB_DATA_MAX_VALUES_PER_TAG=0
+      - INFLUXDB_DATA_MAX_SERIES_PER_DATABASE=0
+      - INFLUXDB_DATA_WAL_FSYNC_DELAY=50ms
+      # - INFLUXDB_DATA_CACHE_MAX_MEMORY_SIZE=200m
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    healthcheck:
+      test: curl -I localhost:8086/ping || exit 1
+      interval: 1m
+      timeout: 30s
+      retries: 2
+      start_period: 5m
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '0.70'
+          memory: 400mb
+        reservations:
+          cpus: '0.50'
+          memory: 200mb
+    logging:
+      options:
+        max-size: 5m
+    # env_file:
+    #   - 'env.influxdb'
+    networks:
+      database:
+
+  telegraf:
+    # https://hub.docker.com/_/telegraf/
+    image: telegraf
+    # container_name: telegraf
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    logging:
+      options:
+        max-size: 3m
+    networks:
+      database:
+
+  kapacitor:
+    # https://hub.docker.com/_/kapacitor/
+    image: kapacitor
+    # container_name: kapacitor
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
+    logging:
+      options:
+        max-size: 3m
+    networks:
+      database:
+
+
+  chronograf:
+    # https://hub.docker.com/_/chronograf/
+    image: chronograf
+    # container_name: chronograf
+    ports:
+      - "8888:8888"
+    restart: always
+    logging:
+      options:
+        max-size: 1m
+    command:
+      - --influxdb-url=http://influxdb:8086
+      - --kapacitor-url=http://kapacitor:9092
+    networks:
+      database:
+
+
+  grafana:
+    # https://hub.docker.com/r/grafana/grafana/tags/
+    ### for instyalling plugins, the dockerfile sets and unsets the proxy!
+    # build:
+    #   context: ./grafana/
+    #   args:
+    #     - GRAFANA_VERSION=5.2.1
+    #     - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    # image: grafana:latest-with-plugins
+
+    ### for running a simple grafana image
+    image: grafana/grafana
+
+    # container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      # - GF_PATHS_PLUGINS=/grafana_plugins
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin.par
+      - GF_SECURITY_USERS_ALLOW_ORG_CREATE=false
+      - GF_SECURITY_USERS_VERIFY_EMAIL_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_USERS_ALLOW_SIGN_UP=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANNONYMUS_ORG_NAME=ORGANIZATION
+      - GF_AUTH_ANNONYMUS_ORG_ROLE=Viewer
+      - GF_AUTH_DISABLE_LOGIN_FORM=false
+      - GF_AUTH_PROXY=false
+
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      # - ./grafana/custom.ini:/etc/grafana/grafana.ini
+      # - ./grafana/dashboards:/var/lib/grafana/dashboards
+      # - ./grafana/provisioning:/etc/grafana/provisioning
+    logging:
+      options:
+        max-size: 5m
+    networks:
+      database:
+
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      database:
+
+  homeassistant:
+    image: homeassistant/home-assistant
+    ports:
+      - "8123:8123"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - homeassistant-storage:/config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    networks:
+      database:
+      # hostnet:
+
+  openhab:
+    image: openhab/openhab:2.3.0-amd64-alpine
+    ports:
+      - "8800:8080"
+      - "8433:8433"
+    volumes:
+      - openhab-storage:/openhab
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      database:
+      # hostnet:
+    environment:
+      OPENHAB_HTTP_PORT: "8080"
+      OPENHAB_HTTPS_PORT: "8443"
+
+
+
+
+
+volumes:
+    influxdb-storage:
+    grafana-storage:
+    homeassistant-storage:
+    openhab-storage:
+
+
+
+networks:
+  hostnet:
+    external:
+      name: host
+  database:
+
