@@ -114,8 +114,7 @@ services:
 
     ### for running a simple grafana image
     image: grafana/grafana
-
-    # container_name: grafana
+# container_name: grafana
     ports:
       - "3000:3000"
     restart: always
@@ -158,48 +157,88 @@ services:
     networks:
       database:
 
-  homeassistant:
-    image: homeassistant/home-assistant
-    ports:
-      - "8123:8123"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - homeassistant-storage:/config
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    networks:
-      database:
-      # hostnet:
+  # homeassistant:
+  #   image: homeassistant/home-assistant
+  #   ports:
+  #     - "8123:8123"
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - homeassistant-storage:/config
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 5s
+  #       max_attempts: 3
+  #       window: 120s
+  #   networks:
+  #     database:
+  #     hostnet:
 
-  openhab:
-    image: openhab/openhab:2.3.0-amd64-alpine
+  # openhab:
+  #   image: openhab/openhab:2.3.0-amd64-alpine
+  #   image: openhab/openhab:2.3.0-amd64-alpine
+  #   ports:
+  #     - "8800:8080"
+  #     - "8433:8433"
+  #   volumes:
+  #     - openhab-storage:/openhab
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - /etc/timezone:/etc/timezone:ro
+  #   networks:
+  #     database:
+  #     # hostnet:
+  #   environment:
+  #     OPENHAB_HTTP_PORT: "8080"
+  #     OPENHAB_HTTPS_PORT: "8443"
+
+
+  pihole:
+    # https://hub.docker.com/r/pihole/pihole/
+    image: pihole/pihole
     ports:
       - "8800:8080"
       - "8433:8433"
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80"
+      - "443:443"
     volumes:
-      - openhab-storage:/openhab
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-    networks:
-      database:
-      # hostnet:
+      - pihole-storage:/etc/pihole
+      - pihole-dns-storage:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    deploy:
+      restart_policy:
+        condition: on-failure
     environment:
-      OPENHAB_HTTP_PORT: "8080"
-      OPENHAB_HTTPS_PORT: "8443"
+      ServerIP: "192.168.1.57"
+      WEB_PORT: "8765"
+      WEBPASSWORD: "pihole.par"
+    networks:
+      hostnet:
 
+# IP_LOOKUP="$(ip route get 8.8.8.8 | awk '{ print $NF; exit }')"  # May not work for VPN / tun0
+# IPv6_LOOKUP="$(ip -6 route get 2001:4860:4860::8888 | awk '{for(i=1;i<=NF;i++) if ($i=="src") print $(i+1)}')"  # May not work for VPN / tun0
+# IP="${IP:-$IP_LOOKUP}"  # use $IP, if set, otherwise IP_LOOKUP
+# IPv6="${IPv6:-$IPv6_LOOKUP}"  # use $IPv6, if set, otherwise IP_LOOKUP
+# DOCKER_CONFIGS="$(pwd)"  # Default of directory you run this from, update to where ever.
 
+# docker run -d \
+#     --name pihole \
+#     -v "${DOCKER_CONFIGS}/pihole/:/etc/pihole/" \
+#     -v "${DOCKER_CONFIGS}/dnsmasq.d/:/etc/dnsmasq.d/" \
 
-
+# echo -n "Your password for https://${IP}/admin/ is "
+# docker logs pihole 2> /dev/null | grep 'password:'
 
 volumes:
     influxdb-storage:
     grafana-storage:
     homeassistant-storage:
     openhab-storage:
+    pihole-storage:
+    pihole-dns-storage:
 
 
 

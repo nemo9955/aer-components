@@ -16,17 +16,14 @@ DOCKER_BASE_IMAGE = {
     "x86_64": "telegraf"
 }
 
-# def populate_conf(alconf):
-#     ctype = CONT_NAME.upper().replace("-", "_")
-#     alconf[ctype + "_CONT_NAME"] = CONT_NAME
-#     alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
-
 
 def run_container(alconf):
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
     util.to_host(os.path.join(CONT_PATH, "telegraf.conf"))
+    # util.to_host(os.path.join(CONT_PATH, "piholestats.sh"))
     run("cp telegraf.conf $HOME/")
+    # run("chmod +x piholestats.sh ")
 
     util.ensure_cont_stopped(CONT_NAME)
     util.build_latest_image(CONT_NAME, arch_img_name)
@@ -35,9 +32,11 @@ def run_container(alconf):
     run(' docker run ' +
         ' --restart always ' +
         ' -dt ' +
-        ' --network host ' +
+        ' --net=net_database ' +
+        # ' --network host ' +
         ' -v /var/run/docker.sock:/var/run/docker.sock:ro ' +
         ' -v $HOME/telegraf.conf:/etc/telegraf/telegraf.conf:ro  ' +
+        # ' -v $HOME/piholestats.sh:/piholestats.sh  ' +
         # ' -p 127.0.0.1:{0}:{0} '.format() +
         # ' --expose ' +
         '-v {0}-storage:/var/lib/{0} '.format(CONT_NAME) +
@@ -47,8 +46,11 @@ def run_container(alconf):
         ' --name {} '.format(CONT_NAME) +
         arch_img_name)
 
-    # time.sleep(5)
-    # run("docker exec ##### ")
-    # run("docker restart ######### ")
+
+    # run('docker cp piholestats.sh telegraf:/piholestats.sh ')
+
+# time.sleep(5)
+# run("docker exec ##### ")
+# run("docker restart ######### ")
 
     util.print_cont_status(CONT_NAME)

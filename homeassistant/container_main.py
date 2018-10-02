@@ -14,13 +14,15 @@ CONT_PORT = "8123"
 
 
 DOCKER_BASE_IMAGE = {
-    "armv7l": "lroguet/rpi-home-assistant",
+    # "armv7l": "lroguet/rpi-home-assistant",
+    "armv7l": "homeassistant/armhf-homeassistant",
     "x86_64": "homeassistant/home-assistant"
 }
 
 
 def run_container(alconf):
     # util.ensute_custom_network_bridge()
+    util.ensute_custom_network_bridge("net_database")
     util.ensure_cont_stopped(CONT_NAME)
 
     run("mkdir -p $HOME/%s" % CONT_NAME)
@@ -31,12 +33,13 @@ def run_container(alconf):
 
     run(" docker run " +
         " -dt " +
-        '--link influxdb ' +
+        ' --net=net_database ' +
+        # '--link influxdb ' +
         # '--network host ' +
         # " --network {} ".format(alconf.var.docker_network_name) +
         # '--ip "192.168.59.123"  ' +
-        ' --expose {} '.format(CONT_PORT) +
-        # ' -p {0}:{0} '.format(CONT_PORT) +
+        # ' --expose {} '.format(CONT_PORT) +
+        ' -p {0}:{0} '.format(CONT_PORT) +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
         " --restart always " +
         " --name %s " % CONT_NAME +

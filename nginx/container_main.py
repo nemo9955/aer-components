@@ -39,7 +39,7 @@ def run_container(alconf):
     run('export DOCKER_OPTS="--auth=identity --host=tcp://0.0.0.0:2376" && docker run ' +
         # ' --network host ' +
         ' --restart always ' +
-        '--link grafana ' +
+        # '--link grafana ' +
         # '--link chronograf ' +
         # ' -e DOCKER_HOST=tcp://0.0.0.0:2376 ' +
         ' -v /var/run/docker.sock:/var/run/docker.sock:ro ' +

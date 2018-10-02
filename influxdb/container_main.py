@@ -25,8 +25,10 @@ DOCKER_BASE_IMAGE = {
 }
 
 
+# https://hub.docker.com/_/influxdb/
+
 def run_container(alconf):
-    # util.ensute_custom_network_bridge()
+    util.ensute_custom_network_bridge("net_database")
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
     # util.to_host(os.path.join(CONT_PATH, "influxdb.conf"))
@@ -38,6 +40,7 @@ def run_container(alconf):
 
     run('docker run ' +
         '-dt  ' +
+        ' --net=net_database '+
         # '--network host ' +
         # " --network {} ".format(alconf.var.docker_network_name) +
         # '--ip "192.168.59.86"  ' +
@@ -51,6 +54,15 @@ def run_container(alconf):
         # ' -e INFLUXDB_DATA_QUERY_LOG_ENABLED=false' +
         # ' -e INFLUXDB_ADMIN_USER=' +
         # ' -e INFLUXDB_ADMIN_PASSWORD=' +
+        ' -e INFLUXDB_REPORTING_DISABLED="true" ' +
+        ' -e INFLUXDB_META_DIR="/var/lib/influxdb/meta" ' +
+        ' -e INFLUXDB_DATA_DIR="/var/lib/influxdb/data" ' +
+        ' -e INFLUXDB_DATA_WAL_DIR="/var/lib/influxdb/wal" ' +
+        ' -e INFLUXDB_COORDINATOR_WRITE_TIMEOUT="40s" ' +
+        ' -e INFLUXDB_COORDINATOR_MAX_CONCURRENT_QUERIES="0" ' +
+        ' -e INFLUXDB_DATA_MAX_VALUES_PER_TAG="0" ' +
+        ' -e INFLUXDB_DATA_MAX_SERIES_PER_DATABASE="0" ' +
+        ' -e INFLUXDB_DATA_WAL_FSYNC_DELAY="50ms" ' +
         '' +
         # '-v $HOME/backup:/backup ' +
         '-v /etc/localtime:/etc/localtime:ro   ' +

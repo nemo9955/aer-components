@@ -16,12 +16,14 @@ CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
 CONT_PORT = "3000"
 DOCKER_BASE_IMAGE = {
-    "armv7l": "grafana/grafana",
+    "armv7l": "easypi/grafana-arm",
+    # "armv7l": "grafana/grafana",
     "x86_64": "grafana/grafana"
 }
 
 
 def run_container(alconf):
+    util.ensute_custom_network_bridge("net_database")
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
     util.ensure_cont_stopped(CONT_NAME)
@@ -30,16 +32,20 @@ def run_container(alconf):
 
     run(' docker run ' +
         ' -dt ' +
+        ' --net=net_database ' +
         # ' --network host ' +
-        '--link influxdb ' +
+        # '--link influxdb ' +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
-        # ' -p 3000:3000 ' +
-        ' --expose 3000 ' +
+        ' -p 3000:3000 ' +
+        # ' --expose 3000 ' +
         ' --restart always ' +
         ' --name=grafana ' +
         # ' -v $HOME/backup:/backup   ' +
         ' -v grafana-storage:/var/lib/grafana ' +
         ' --log-opt max-size=250k --log-opt max-file=4 ' +
+
+
+        ' -e "GF_INSTALL_PLUGINS=grafana-clock-panel" ' +
 
         ' -e GF_ANALYTICS_CHECK_FOR_UPDATES="false" ' +
         ' -e GF_ANALYTICS_REPORTING_ENABLED="false" ' +
@@ -56,7 +62,7 @@ def run_container(alconf):
         ' -e GF_USERS_ALLOW_SIGN_UP="true" ' +
         ' -e GF_AUTH_PROXY="false" ' +
 
-        ' -e GF_SERVER_ROOT_URL="%(protocol)s://%(domain)s:%(http_port)s/grafana" ' +
+        # ' -e GF_SERVER_ROOT_URL="%(protocol)s://%(domain)s:%(http_port)s/grafana" ' +
         # ' -e GF_SERVER_ROOT_URL="%(protocol)s://%(domain)s:%(http_port)s/grafana" ' +
         # ' -e OH_PORT_TO_PATH="3000:grafana" ' +
         # ' -e VIRTUAL_HOST="grafana.192.168.2.111"  ' +
