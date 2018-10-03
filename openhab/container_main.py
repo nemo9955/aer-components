@@ -14,37 +14,38 @@ CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
 
 DOCKER_BASE_IMAGE = {
-    "armv7l": "openhab/openhab:2.2.0-armhf-debian",
-    "x86_64": "openhab/openhab:2.2.0-arm64-debian"
+    "armv7l": "openhab/openhab:2.3.0-armhf-debian",
+    "x86_64": "openhab/openhab:2.3.0-arm64-debian"
 }
 
 
-# def populate_conf(alconf):
-#     ctype = CONT_NAME.upper().replace("-", "_")
-#     alconf[ctype + "_CONT_NAME"] = CONT_NAME
-#     alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
-#     alconf.OPENHAB_PORT = "8080"
-    # alconf.OPENHAB_CONT_NAME = CONT_NAME
-    # alconf.OPENHAB_IMG_NAME = DOCKER_BASE_IMAGE[util.dev_type()]
+# # def populate_conf(alconf):
+# #     ctype = CONT_NAME.upper().replace("-", "_")
+# #     alconf[ctype + "_CONT_NAME"] = CONT_NAME
+# #     alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
+# #     alconf.OPENHAB_PORT = "8080"
+#     # alconf.OPENHAB_CONT_NAME = CONT_NAME
+#     # alconf.OPENHAB_IMG_NAME = DOCKER_BASE_IMAGE[util.dev_type()]
+
+
+# def run_container(alconf):
+#     df_name = "Dockerfile-" + util.dev_type()
+
+#     # excluded = [".git", "lib", ".gitignore", "README.md", ".vscode"]
+#     # util.to_host(os.path.join(CONT_PATH, "DATA"),
+#     #               rename="data", exclude=excluded)
+#     # util.to_host(os.path.join(CONT_PATH, df_name), rename="Dockerfile")
+#     util.to_host(os.path.join(CONT_PATH, "run-container.sh"))
+
+#     print(cyan("Executting ./run-container.sh"))
+#     run("chmod +x ./run-container.sh")
+#     run("/bin/sh -c ./run-container.sh")
+
+#     util.is_running(CONT_NAME)
 
 
 def run_container(alconf):
-    df_name = "Dockerfile-" + util.dev_type()
-
-    # excluded = [".git", "lib", ".gitignore", "README.md", ".vscode"]
-    # util.to_host(os.path.join(CONT_PATH, "DATA"),
-    #               rename="data", exclude=excluded)
-    # util.to_host(os.path.join(CONT_PATH, df_name), rename="Dockerfile")
-    util.to_host(os.path.join(CONT_PATH, "run-container.sh"))
-
-    print(cyan("Executting ./run-container.sh"))
-    run("chmod +x ./run-container.sh")
-    run("/bin/sh -c ./run-container.sh")
-
-    util.is_running(CONT_NAME)
-
-
-def run_container(alconf):
+    util.ensute_custom_network_bridge("net_database")
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
     util.ensure_cont_stopped(CONT_NAME)
@@ -56,12 +57,14 @@ def run_container(alconf):
     run(' docker run ' +
         ' --restart always ' +
         ' -td ' +
-        ' --network=host ' +
+        # ' --network=host ' +
+        ' --net=net_database '+
 
         ' -v /etc/localtime:/etc/localtime:ro ' +
         ' -v /etc/timezone:/etc/timezone:ro ' +
 
-        ' -e OPENHAB_HTTP_PORT="7123" ' +
+        # ' -e OPENHAB_HTTP_PORT="7123" ' +
+        ' -p 7123:8080 ' +
 
         ' -v $HOME/openhab/addons:/openhab/addons ' +
         ' -v $HOME/openhab/conf:/openhab/conf ' +

@@ -11,17 +11,12 @@ from aer.commands.component import util
 CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
 CONT_PORT = "9995"
+CONT_PORT_VIZ = "9996"
 
 DOCKER_BASE_IMAGE = "respir-mesh-server"
 
-
-# def populate_conf(alconf):
-#     ctype = CONT_NAME.upper().replace("-", "_")
-#     alconf[ctype + "_CONT_NAME"] = CONT_NAME
-#     alconf[ctype + "_IMG_NAME"] = DOCKER_BASE_IMAGE[util.dev_type()]
-
-
 def run_container(alconf):
+    util.ensute_custom_network_bridge("net_database")
     # util.ensute_custom_network_bridge()
     # import json
     # print(json.dumps(alconf,indent=2))
@@ -44,12 +39,15 @@ def run_container(alconf):
 
     run(' docker run ' +
         ' --restart always ' +
+        ' --net=net_database '+
         ' -dt ' +
-        ' --network host ' +
+        ' -p {0}:{0} '.format(CONT_PORT) +
+        ' -p {0}:{0} '.format(CONT_PORT_VIZ) +
+        # ' --network host ' +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
         ' -v %s:/RespirMeshServer ' % REM_SERVER_PATH +
-        ' --expose {0} '.format(CONT_PORT) +
-        ' --expose 9996 ' +
+        # ' --expose {0} '.format(CONT_PORT) +
+        # ' --expose 9996 ' +
         # ' -v $CURRENT_PATH/../{0}:/{0}:ro '.format(CONT_NAME) +
         # ' -e OH_PORT_TO_PATH="000:template" ' +
         ' --log-opt max-size=250k --log-opt max-file=4 ' +
