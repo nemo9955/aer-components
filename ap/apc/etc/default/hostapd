@@ -1,6 +1,6 @@
 
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
-DAEMON_OPTS="-dd"
+# DAEMON_OPTS="-dd"
 
 # Additional daemon options to be appended to hostapd command:-
 # 	-d   show more debug messages (-dd for even more)

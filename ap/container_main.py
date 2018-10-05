@@ -5,7 +5,7 @@ import os
 import sys
 from os.path import join as pjoin
 
-from fabric.api import run
+from fabric.api import run, cd, quiet, sudo
 from fabric.colors import blue, cyan, green, magenta, red, white, yellow
 
 from aer.commands.component import util
@@ -13,9 +13,9 @@ from aer.commands.component import util
 CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
 
-DOCKER_BASE_IMAGE = {
-    "armv7l": "ap"
-}
+# DOCKER_BASE_IMAGE = {
+#     "armv7l": "ap"
+# }
 
 """
 interface=wlan0
@@ -85,34 +85,34 @@ def run_container(alconf):
         replace_here(alconf)
 
     # return
-#     run("sudo cp -f apc/etc/sysctl.conf /etc/sysctl.conf ")
-#     # run("sudo cp -f apc/etc/rc.local /etc/rc.local ")
-#     run("sudo cp -f apc/etc/iptables.test.rules /etc/iptables.test.rules ")
-#     run("sudo cp -f apc/etc/network/if-pre-up.d/iptables /etc/network/if-pre-up.d/iptables ")
+#     sudo("cp -f apc/etc/sysctl.conf /etc/sysctl.conf ")
+#     # sudo("cp -f apc/etc/rc.local /etc/rc.local ")
+#     sudo("cp -f apc/etc/iptables.test.rules /etc/iptables.test.rules ")
+#     sudo("cp -f apc/etc/network/if-pre-up.d/iptables /etc/network/if-pre-up.d/iptables ")
 
-    # run("sudo apt-get update -y")
-    # run("sudo apt-get dist-upgrade -y")
+    # sudo("apt-get update -y")
+    # sudo("apt-get dist-upgrade -y")
 
-    run("sudo apt-get install -y dnsmasq hostapd dhcpcd5 ")
+    sudo("apt-get install -y dnsmasq hostapd dhcpcd5 ")
 
-    run("sudo systemctl enable dhcpcd")
-    run("sudo systemctl stop hostapd")
-    run("sudo systemctl stop dhcpcd")
-    run("sudo systemctl stop dnsmasq")
+    sudo("systemctl enable dhcpcd")
+    sudo("systemctl stop hostapd")
+    sudo("systemctl stop dhcpcd")
+    sudo("systemctl stop dnsmasq")
 
-    run("sudo cp -f apc/etc/dhcpcd.conf /etc/dhcpcd.conf ")
-    run("sudo cp -f apc/etc/network/interfaces /etc/network/interfaces ")
+    sudo("cp -f apc/etc/dhcpcd.conf /etc/dhcpcd.conf ")
+    sudo("cp -f apc/etc/network/interfaces /etc/network/interfaces ")
 
-    run("sudo service dhcpcd restart")
-    run("sudo ifdown wlan0")
-    run("sudo ifup wlan0")
+    sudo("service dhcpcd restart")
+    sudo("ifdown wlan0")
+    sudo("ifup wlan0")
 
-    run("sudo cp -f apc/etc/dnsmasq.conf /etc/dnsmasq.conf ")
-    run("sudo cp -f apc/etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf ")
-    run("sudo cp -f apc/etc/default/hostapd /etc/default/hostapd ")
+    sudo("cp -f apc/etc/dnsmasq.conf /etc/dnsmasq.conf ")
+    sudo("cp -f apc/etc/hostapd/hostapd.conf /etc/hostapd/hostapd.conf ")
+    sudo("cp -f apc/etc/default/hostapd /etc/default/hostapd ")
 
-    run("sudo service dhcpcd  start")
-    run("sudo service dnsmasq start")
-    run("sudo service hostapd start")
-    run("sudo service wpa_supplicant stop")
-    run("systemctl disable wpa_supplicant")
+    sudo("service dhcpcd  start")
+    sudo("service dnsmasq start")
+    sudo("service hostapd start")
+    sudo("service wpa_supplicant stop")
+    sudo("systemctl disable wpa_supplicant")

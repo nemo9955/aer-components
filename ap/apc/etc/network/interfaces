@@ -6,16 +6,15 @@
 # Include files from /etc/network/interfaces.d:
 source-directory /etc/network/interfaces.d
 
-auto lo
-iface lo inet loopback
-
-iface eth0 inet manual
-
-
-allow-hotplug __AP_INTERFACE__
-iface __AP_INTERFACE__ inet static
-	address __AP_ADDRRESS_ROUTE__
-	netmask __AP_ADDRRESS_NETMASK__
-	network __AP_ADDRRESS_NETWORK__
-	broadcast __AP_ADDRRESS_BROADCAST__
-#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+# auto lo
+# iface lo inet loopback
+#
+# iface eth0 inet dhcp
+#
+# allow-hotplug __AP_INTERFACE__
+# iface __AP_INTERFACE__ inet static
+# 	address __AP_ADDRRESS_ROUTE__
+# 	netmask __AP_ADDRRESS_NETMASK__
+# 	network __AP_ADDRRESS_NETWORK__
+# 	broadcast __AP_ADDRRESS_BROADCAST__
+# #    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
