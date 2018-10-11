@@ -12,10 +12,11 @@ from aer.commands.component import util
 
 CONT_PATH = os.path.dirname(os.path.realpath(__file__))
 CONT_NAME = os.path.basename(CONT_PATH)
-CONT_PORT = "8080"
+
+# https://pifi.imti.co/
 
 DOCKER_BASE_IMAGE = {
-    "armv7l": "sdelrio/rpi-hostap"
+    "armv7l": "cjimti/iotwifi"
 }
 
 
