@@ -29,10 +29,12 @@ def run_container(alconf):
     util.build_latest_image(CONT_NAME, arch_img_name)
     util.create_storage_container(CONT_NAME)
 
+
     run(' docker run ' +
         ' --restart always ' +
         ' -dt ' +
         ' --net=net_database ' +
+        ' -h {0}-{1} '.format(  str(run("hostname")) ,CONT_NAME  ) +
         # ' --network host ' +
         ' -v /var/run/docker.sock:/var/run/docker.sock:ro ' +
         ' -v $HOME/telegraf.conf:/etc/telegraf/telegraf.conf:ro  ' +

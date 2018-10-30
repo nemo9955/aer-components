@@ -3,7 +3,7 @@
 
 import os
 
-from fabric.api import run
+from fabric.api import run, sudo
 from fabric.colors import blue, cyan, green, magenta, red, white, yellow
 
 from aer.commands.component import util
@@ -39,6 +39,10 @@ def run_container(alconf):
 
     # ipv6ip = run("ip -6 route get 2001:4860:4860::8888 | awk '{for(i=1;i<=NF;i++) if ($i==\"src\") print $(i+1)}'")
     # docker ipv6 needs to be activated : https://docs.docker.com/config/daemon/ipv6/
+
+    sudo('fuser -k -n tcp 53')
+    sudo('fuser -k -n udp 53')
+    sudo('fuser -k -n udp 67')
 
     run(' docker run ' +
         ' --restart always ' +
