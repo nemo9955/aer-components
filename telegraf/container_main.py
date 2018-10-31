@@ -20,6 +20,7 @@ DOCKER_BASE_IMAGE = {
 def run_container(alconf):
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
+    util.ensute_custom_network_bridge("net_database")
     util.to_host(os.path.join(CONT_PATH, "telegraf.conf"))
     # util.to_host(os.path.join(CONT_PATH, "piholestats.sh"))
     run("cp telegraf.conf $HOME/")
@@ -51,8 +52,8 @@ def run_container(alconf):
 
     # run('docker cp piholestats.sh telegraf:/piholestats.sh ')
 
-# time.sleep(5)
-# run("docker exec ##### ")
-# run("docker restart ######### ")
+    # time.sleep(5)
+    # run("docker exec ##### ")
+    # run("docker restart ######### ")
 
     util.print_cont_status(CONT_NAME)

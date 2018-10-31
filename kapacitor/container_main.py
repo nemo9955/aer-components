@@ -26,6 +26,7 @@ DOCKER_BASE_IMAGE = {
 def run_container(alconf):
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
 
+    util.ensute_custom_network_bridge("net_database")
     util.to_host(os.path.join(CONT_PATH, "kapacitor.conf"))
     run("cp kapacitor.conf $HOME/")
 
@@ -35,6 +36,7 @@ def run_container(alconf):
 
     run(' docker run ' +
         ' --restart always ' +
+        ' --net=net_database ' +
         ' -dt ' +
         # ' --network host ' +
         # ' -e KAPACITOR_INFLUXDB_0_URLS_0=http://localhost:8086 ' +
