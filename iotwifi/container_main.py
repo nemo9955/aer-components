@@ -30,8 +30,8 @@ DOCKER_BASE_IMAGE = {
 def get_config(alconf):
     the_config = {
         "dnsmasq_cfg": {
-            # "vendor_class": "set:device,IoT",
-            "address": "192.168.42.1",
+            "vendor_class": "set:device,IoT",
+            "address": "/#/192.168.42.1",
             "dhcp_range": "192.168.42.50,192.168.42.150,24h"
         },
         "host_apd_cfg": {

@@ -90,7 +90,7 @@ def run_container(alconf):
 #     sudo("cp -f apc/etc/iptables.test.rules /etc/iptables.test.rules ")
 #     sudo("cp -f apc/etc/network/if-pre-up.d/iptables /etc/network/if-pre-up.d/iptables ")
 
-    # sudo("apt-get update -y")
+    # sudo("apt-get update -y"
     # sudo("apt-get dist-upgrade -y")
 
     sudo("apt-get install -y dnsmasq hostapd dhcpcd5 ")
