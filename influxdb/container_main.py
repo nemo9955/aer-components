@@ -44,7 +44,7 @@ def run_container(alconf):
         # '--network host ' +
         # " --network {} ".format(alconf.var.docker_network_name) +
         # '--ip "192.168.59.86"  ' +
-        # ' -p {0}:{0} '.format(CONT_PORT) +
+        ' -p {0}:{0} '.format(CONT_PORT) +
         # ' -p 127.0.0.1:{0}:{0} '.format(CONT_PORT) +
         '--restart always ' +
         '--log-opt max-size=250k --log-opt max-file=4  ' +
