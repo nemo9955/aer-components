@@ -14,8 +14,8 @@ CONT_NAME_DNS = CONT_NAME+"_dns"
 
 
 DOCKER_BASE_IMAGE = {
-    "armv7l": "pihole/pihole:v4.0_armhf",
-    "x86_64": "pihole/pihole:v4.0_amd64"
+    "armv7l": "pihole/pihole:4.2.2-1_armhf",
+    "x86_64": "pihole/pihole:4.2.2-1_amd64"
 }
 
 
@@ -45,19 +45,24 @@ def run_container(alconf):
     sudo('fuser -k -n udp 67')
 
     run(' docker run ' +
-        ' --restart always ' +
+        # ' --restart always ' +
         ' -dt ' +
         ' -v {}-storage:/etc/pihole '.format(CONT_NAME) +
         ' -v {}-storage:/etc/dnsmasq.d '.format(CONT_NAME_DNS) +
         ' --restart=unless-stopped ' +
-        ' --cap-add=NET_ADMIN ' +
-        ' --net=net_database ' +
+        # ' --cap-add=NET_ADMIN ' +
+        # ' --cap-add=CAP_NET_BIND_SERVICE ' +
+        # ' --cap-add=CAP_NET_RAW ' +
+        # ' --cap-add=CAP_NET_ADMIN ' +
+        ' --net=host ' +
         ' -p 53:53/tcp ' +
         ' -p 53:53/udp ' +
         ' -p 67:67/udp ' +
-        ' -p 80:80 ' +
-        ' --dns 127.0.0.1 ' +
+        ' -p 80:80/tcp ' +
+        ' -p 443:443/tcp ' +
         # ' -p 443:443 ' +
+        ' --dns=127.0.0.1 ' +
+        ' --dns=1.1.1.1 ' +
         # ' -p 8765:8765 ' +
         # ' -e WEB_PORT="8765" ' +
         ' -e WEBPASSWORD="pihole.par" ' +

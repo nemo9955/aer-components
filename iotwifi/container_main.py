@@ -5,7 +5,7 @@ import os
 import json
 
 from fabric.api import run, quiet
-from fabric.contrib.files import  append
+from fabric.contrib.files import append
 from fabric.colors import blue, cyan, green, magenta, red, white, yellow
 
 from aer.commands.component import util
@@ -29,13 +29,13 @@ DOCKER_BASE_IMAGE = {
 
 def get_config(alconf):
     the_config = {
-        "dnsmasq_cfg": {
-            "vendor_class": "set:device,IoT",
-            "address": "/#/192.168.42.1",
-            "dhcp_range": "192.168.42.50,192.168.42.150,24h"
-        },
+        # "dnsmasq_cfg": {
+        #     "address": "/#/192.168.42.1",
+        #     "vendor_class": "set:device,IoT",
+        #     "dhcp_range": "192.168.42.50,192.168.42.150,1h"
+        # },
         "host_apd_cfg": {
-            "ip": "192.168.42.1",
+            # "ip": "192.168.42.1",
             "ssid": alconf.var.AP_SSID,
             "wpa_passphrase": alconf.var.AP_PASS,
             "channel": "6"
@@ -49,9 +49,9 @@ def get_config(alconf):
 
 
 def get_wpa(alconf):
+        # ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+        # update_config=1
     return """
-        ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-        update_config=1
         country={country}
 
         network={{
@@ -59,7 +59,17 @@ def get_wpa(alconf):
             psk="{psk}"
         }}
 
-    """.format(        country=alconf.var.home_country,        ssid=alconf.var.home_ssid,        psk=alconf.var.home_psk    )
+        network={{
+            ssid="{ssid_1}"
+            psk="{psk_1}"
+        }}
+
+    """.format(country=alconf.var.home_country,
+               ssid=alconf.var.home_ssid,
+               psk=alconf.var.home_psk,
+               ssid_1=alconf.var.home_ssid_1,
+               psk_1=alconf.var.home_psk_1
+               )
 
 
 def run_container(alconf):
@@ -74,9 +84,9 @@ def run_container(alconf):
     # print(json.dumps(get_config(alconf), indent=2))
     # print(json.dumps(alconf, indent=2))
     # with quiet():
-    run("rm -f ~/wificfg.json ~/wifi_wpa_supplicant.conf  " )
-    append("~/wificfg.json", json.dumps(get_config(alconf), indent=2) )
-    append("~/wifi_wpa_supplicant.conf", get_wpa(alconf) )
+    run("rm -f ~/wificfg.json ~/wifi_wpa_supplicant.conf  ")
+    append("~/wificfg.json", json.dumps(get_config(alconf), indent=2))
+    append("~/wifi_wpa_supplicant.conf", get_wpa(alconf))
 
     util.ensure_cont_stopped(CONT_NAME)
     util.build_latest_image(CONT_NAME, arch_img_name)

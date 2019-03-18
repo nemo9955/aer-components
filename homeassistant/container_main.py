@@ -16,6 +16,8 @@ CONT_PORT = "8123"
 DOCKER_BASE_IMAGE = {
     # "armv7l": "lroguet/rpi-home-assistant",
     "armv7l": "homeassistant/armhf-homeassistant",
+    # "armv7l": "homeassistant/raspberrypi3-homeassistant",
+    # "armv7l": "homeassistant/home-assistant"
     "x86_64": "homeassistant/home-assistant"
 }
 
