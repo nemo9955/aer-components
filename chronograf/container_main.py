@@ -17,7 +17,7 @@ DOCKER_BASE_IMAGE = {
     "x86_64": "chronograf"
 }
 
-# https://hub.docker.com/_/chronograf/
+#  https://hub.docker.com/_/chronograf/
 
 def run_container(alconf):
     arch_img_name = DOCKER_BASE_IMAGE[util.dev_type()]
